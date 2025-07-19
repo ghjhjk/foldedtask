@@ -79,7 +79,7 @@ HTML_FORM = '''
                 <form id="telegramForm" class="space-y-6">
                     <!-- 닉네임 입력 -->
                     <div>
-                        <label for="nickname" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
+                        <label for="nickname" class="block text-sm font-medium text-gray-700 mb-1">Nickname</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none icon-absolute z-10">
                                 <i class="fas fa-user text-gray-400"></i>
