@@ -214,7 +214,7 @@ def submit():
     nickname = data.get('nickname')
     telegram_id = data.get('telegramId')
     contact_reason = data.get('contactReason')
-    message = f"New user info:\nNickname: {nickname}\nTelegram ID: {telegram_id}\nContact Reason: {contact_reason}"
+    message = f"사용자 정보 :\nNickname : {nickname}\n텔레그램 ID : {telegram_id}\n문의 유형 : {contact_reason}"
     success = send_telegram_message(message)
     if success:
         return jsonify({'success': True})
