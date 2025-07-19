@@ -4,26 +4,18 @@ import os
 
 app = Flask(__name__)
 
-# 봇의 토큰과 관리자의 Telegram ID를 코드에 직접 입력
+# 봇의 토큰과 관리자의 Telegram ID
 BOT_TOKEN = "7981968551:AAH-T7T5hXHL21kaXLy3OI0Un3OtukM9Hq4"
 ADMIN_CHAT_ID = "1025654755"
 
-# 텔레그램 메시지를 보내는 함수
 def send_telegram_message(message):
     url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
-    payload = {
-        'chat_id': ADMIN_CHAT_ID,
-        'text': message,
-    }
+    payload = {'chat_id': ADMIN_CHAT_ID, 'text': message}
     try:
         response = requests.post(url, data=payload)
-        if response.status_code == 200:
-            return True
-        else:
-            app.logger.error(f"Failed to send message. Status Code: {response.status_code}, Response: {response.text}")
-            return False
+        return response.status_code == 200
     except requests.exceptions.RequestException as e:
-        app.logger.error(f"RequestException occurred while sending message: {e}")
+        app.logger.error(f"RequestException: {e}")
         return False
 
 HTML_FORM = '''
@@ -34,7 +26,8 @@ HTML_FORM = '''
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAN 선텔정지 전용</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -46,18 +39,20 @@ HTML_FORM = '''
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
         }
-        .input-focus-effect:focus {
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        /* 포커스 시 입력칸과 아이콘이 함께 올라가도록 부모에만 transform 적용 */
+        .relative:focus-within {
             transform: translateY(-2px);
             transition: all 0.3s ease;
         }
+        .input-focus-effect:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+            outline: none;
+        }
         .btn-hover-effect:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
-        .btn-active-effect:active {
-            transform: translateY(-1px);
-        }
+        .btn-active-effect:active { transform: translateY(-1px); }
         .shake { animation: shake 0.5s; }
         @keyframes shake {
             0%,100% { transform: translateX(0); }
@@ -82,10 +77,11 @@ HTML_FORM = '''
                 </div>
                 <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">MAN 선텔정지 전용</h2>
                 <form id="telegramForm" class="space-y-6">
+                    <!-- 닉네임 입력 -->
                     <div>
-                        <label for="nickname" class="block text-sm font-medium text-gray-700 mb-1">Nickname</label>
+                        <label for="nickname" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none icon-absolute z-10">
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
                             <input
@@ -95,13 +91,14 @@ HTML_FORM = '''
                                 required
                                 class="pl-10 input-focus-effect w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 placeholder="닉네임"
-                            >
+                            />
                         </div>
                     </div>
+                    <!-- Telegram ID 입력 -->
                     <div>
                         <label for="telegramId" class="block text-sm font-medium text-gray-700 mb-1">Telegram ID</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none icon-absolute z-10">
                                 <i class="fab fa-telegram text-gray-400"></i>
                             </div>
                             <input
@@ -111,13 +108,14 @@ HTML_FORM = '''
                                 required
                                 class="pl-10 input-focus-effect w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 placeholder="텔레그램 ID (@제외)"
-                            >
+                            />
                         </div>
                     </div>
+                    <!-- Contact Reason 드롭다운 -->
                     <div>
                         <label for="contactReason" class="block text-sm font-medium text-gray-700 mb-1">Contact Reason</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none icon-absolute z-10">
                                 <i class="fas fa-question-circle text-gray-400"></i>
                             </div>
                             <select
@@ -131,11 +129,8 @@ HTML_FORM = '''
                         </div>
                     </div>
                     <div id="messageContainer" class="hidden"></div>
-                    <button
-                        type="submit"
-                        id="submitBtn"
-                        class="w-full btn-hover-effect btn-active-effect flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-                    >
+                    <button type="submit" id="submitBtn"
+                            class="w-full btn-hover-effect btn-active-effect flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                         <span id="btnText">전송</span>
                         <span id="btnSpinner" class="hidden ml-2"><i class="fas fa-spinner fa-spin"></i></span>
                     </button>
@@ -176,7 +171,7 @@ HTML_FORM = '''
                 const res = await fetch('/submit', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ nickname, telegramId, contactReason })
+                    body: JSON.stringify({nickname, telegramId, contactReason})
                 });
                 const result = await res.json();
                 if (result.success) {
