@@ -5,8 +5,8 @@ import os
 app = Flask(__name__)
 
 # 봇의 토큰과 관리자의 Telegram ID를 코드에 직접 입력
-BOT_TOKEN = "7981968551:AAH-T7T5hXHL21kaXLy3OI0Un3OtukM9Hq4"  # 봇의 토큰을 여기에 입력
-ADMIN_CHAT_ID = "1025654755"  # 관리자의 텔레그램 ID
+BOT_TOKEN = "8086387643:AAGX1Mzd5GUHdmtELtVB2nmuZn566du_SkM"  # 봇의 토큰을 여기에 입력
+ADMIN_CHAT_ID = "7001739586"  # 관리자의 텔레그램 ID
 
 # 텔레그램 메시지를 보내는 함수
 def send_telegram_message(message):
